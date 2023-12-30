@@ -28,6 +28,7 @@ import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Flags;
+import co.aikar.commands.annotation.MultiArg;
 import co.aikar.commands.annotation.Name;
 import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.Single;
@@ -45,6 +46,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class CommandParameter<CEC extends CommandExecutionContext<CEC, ? extends CommandIssuer>> {
     private final Parameter parameter;
@@ -101,7 +103,10 @@ public class CommandParameter<CEC extends CommandExecutionContext<CEC, ? extends
         //noinspection unchecked
         this.commandIssuer = paramIndex == 0 && manager.isCommandIssuer(type);
         this.canConsumeInput = !this.commandIssuer && !(resolver instanceof IssuerOnlyContextResolver);
-        this.consumesRest = isLast && ((type == String.class && !annotations.hasAnnotation(param, Single.class)) || (type == String[].class));
+
+        //this.consumesRest = isLast && (((type == String.class) && !annotations.hasAnnotation(param, Single.class)) || (type == String[].class)) || ;
+
+        this.consumesRest = !annotations.hasAnnotation(param, Single.class) && (annotations.hasAnnotation(param, MultiArg.class) || type == String.class || type == String[].class);
 
         this.values = annotations.getAnnotationValues(param, Values.class, Annotations.REPLACEMENTS | Annotations.NO_EMPTY);
 
